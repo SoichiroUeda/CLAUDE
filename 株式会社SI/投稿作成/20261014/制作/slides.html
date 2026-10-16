@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>レクサスRX 投稿</title>
+<style>
+  /* ===== 色・フォント（シリーズ共通） ===== */
+  :root {
+    --accent: #22395c;      /* メインカラー（参考元のグレーグリーン → 濃紺にアレンジ） */
+    --accent-soft: #c9d3e0;
+    --ink: #141414;
+    --bg: #f3f2ef;
+    --gothic: "Hiragino Sans", "ヒラギノ角ゴシック", sans-serif;
+    --num: "Avenir Next Condensed", "Avenir Next", "Hiragino Sans", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1080px; overflow: hidden; background: var(--bg); }
+  body { font-family: var(--gothic); color: var(--ink); }
+
+  .slide { position: relative; width: 1080px; height: 1080px; overflow: hidden; display: none;
+    background-color: var(--bg);
+    /* 参考元の大理石風テクスチャの代わりに、ごく薄いノイズ */
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+  .slide.on { display: block; }
+
+  /* ===== 共通パーツ ===== */
+  .pill { position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+    min-width: 600px; height: 98px; padding: 0 60px; border-radius: 49px;
+    background: var(--accent); color: #fff; font-weight: 800; font-size: 60px;
+    display: flex; align-items: center; justify-content: center; letter-spacing: .06em; }
+  .photo { position: absolute; left: 0; width: 1080px; overflow: hidden; }
+  .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* 情報エリア：参考元の「チェックマーク＋2本線」→「POINTタグ＋左の縦ライン」にアレンジ */
+  .info { position: absolute; left: 60px; right: 60px; top: 735px; height: 265px;
+    border-top: 6px solid var(--accent); border-bottom: 6px solid var(--accent);
+    display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+  .tag { position: absolute; top: -26px; left: 0; background: var(--accent); color: #fff;
+    font-family: var(--num); font-weight: 700; font-size: 30px; letter-spacing: .12em;
+    padding: 4px 18px 2px; border-radius: 6px; }
+  .note { font-size: 26px; font-weight: 500; color: #555; margin-top: 14px; }
+
+  /* 最下部：ページ番号＋スワイプ誘導 */
+  .footer { position: absolute; left: 0; right: 0; bottom: 0; height: 66px; padding: 0 44px;
+    display: flex; align-items: center; justify-content: space-between; }
+  .page { font-family: var(--num); font-weight: 700; font-size: 32px; color: var(--accent); letter-spacing: .08em; }
+  .page b { font-size: 40px; }
+  .swipe { display: flex; align-items: center; gap: 4px; font-family: var(--num); font-weight: 700;
+    font-size: 36px; letter-spacing: .14em; color: var(--accent); }
+  .swipe i { font-style: normal; font-size: 46px; line-height: 1; margin-top: -6px; }
+  .swipe i:nth-of-type(1) { opacity: .35 } .swipe i:nth-of-type(2) { opacity: .65 }
+  .swipe i:nth-of-type(3) { margin-right: 0 }
+
+  /* ===== 1枚目 ===== */
+  .s1 .badge { position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #fff; font-weight: 700; font-size: 38px;
+    padding: 8px 34px; border-radius: 40px; white-space: nowrap; letter-spacing: .05em; }
+  .s1 .sub { position: absolute; top: 106px; width: 100%; text-align: center;
+    font-weight: 800; font-size: 66px; letter-spacing: .02em; }
+  .s1 .title { position: absolute; top: 168px; width: 100%; text-align: center;
+    font-weight: 900; font-size: 168px; letter-spacing: .02em; line-height: 1.15;
+    text-shadow: 6px 6px 0 var(--accent-soft); }
+  .s1 .title span { font-family: var(--num); font-weight: 800; font-size: 190px; margin-left: 24px; }
+  .s1 .photo { top: 372px; left: 40px; width: 1000px; height: 465px; border-radius: 26px; }
+  .s1 .bubble { position: absolute; right: 70px; top: 790px; background: var(--accent); color: #fff;
+    font-weight: 800; font-size: 60px; padding: 10px 40px 14px; border-radius: 18px; }
+  .s1 .bubble::after { content: ""; position: absolute; left: 60px; top: -26px;
+    border: 14px solid transparent; border-bottom: 14px solid var(--accent); }
+  .s1 .save { position: absolute; top: 918px; width: 100%; text-align: center; font-weight: 800; font-size: 48px; }
+  .s1 .save em { font-style: normal; font-size: 64px; color: var(--accent); border-bottom: 8px solid var(--accent-soft); padding: 0 6px; }
+  .s1 .save svg { width: 44px; height: 52px; vertical-align: -6px; margin-right: 6px; }
+  .s1 .footer .page { visibility: hidden; }
+
+  /* ===== 2枚目 ===== */
+  .s2 .l1, .s2 .l3 { position: absolute; width: 100%; text-align: center; font-weight: 700; font-size: 56px; }
+  .s2 .l1 { top: 44px; }
+  .s2 .l1 b { font-family: var(--num); font-size: 70px; }
+  .s2 .l2 { position: absolute; top: 112px; width: 100%; text-align: center;
+    font-family: var(--num); font-weight: 800; font-size: 170px; letter-spacing: .06em; color: var(--accent); }
+  .s2 .l3 { top: 300px; }
+  .s2 .photo { top: 400px; height: 614px; }
+
+  /* ===== 3〜8枚目 ===== */
+  .photo.std { top: 136px; height: 580px; }
+  .lead { font-size: 50px; font-weight: 800; line-height: 1.5; }
+  .lead small { display: block; font-size: 36px; font-weight: 600; color: #333; margin-top: 4px; }
+  .size-row { display: grid; grid-template-columns: repeat(5, auto); column-gap: 14px; align-items: end; }
+  .size-row .k { text-align: center; }
+  .size-row .k { font-size: 36px; font-weight: 700; color: #444; }
+  .size-row .v { font-family: var(--num); font-weight: 700; font-size: 104px; line-height: 1; }
+  .size-row .x { font-family: var(--num); font-size: 70px; font-weight: 500; color: #666; }
+  .unit { font-family: var(--num); font-size: 56px; font-weight: 700; margin-left: 4px; }
+  .grid4 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 22px; width: 100%; }
+  .grid4 div { background: #fff; border-left: 10px solid var(--accent); border-radius: 8px;
+    padding: 10px 18px; text-align: left; font-size: 34px; font-weight: 700; }
+  .grid4 b { font-family: var(--num); font-size: 44px; margin-right: 12px; color: var(--accent); }
+  .big { font-family: var(--num); font-weight: 700; font-size: 128px; line-height: 1; }
+  .big small { font-size: 60px; }
+  .big + .sub2 { font-size: 34px; font-weight: 700; margin-top: 6px; }
+  .price { display: grid; grid-template-columns: auto auto; gap: 0 30px; align-items: baseline; line-height: 1.12; margin-top: 10px; }
+  .price .m { font-family: var(--num); font-weight: 700; font-size: 44px; text-align: right; color: var(--accent); }
+  .price .p { font-weight: 800; font-size: 38px; text-align: left; }
+  .price .p b { font-family: var(--num); font-size: 54px; }
+  .cap { position: absolute; top: 34px; left: 0; font-size: 24px; font-weight: 600; color: #555; text-align: left; line-height: 1.4; }
+  .s6 .photo { top: 136px; height: 878px; }
+  .s8 .footer .swipe { font-family: var(--gothic); font-size: 32px; letter-spacing: .04em; }
+</style>
+</head>
+<body>
+
+<!-- 1枚目：表紙 -->
+<section class="slide s1">
+  <div class="badge">京大工学部生が語る</div>
+  <div class="sub">＼1分でわかる日本車解説／</div>
+  <div class="title">レクサス<span>RX</span></div>
+  <div class="photo"><img src="../素材/103-1024x683.webp" style="object-position:50% 76%"></div>
+  <div class="bubble">どんなクルマ？</div>
+  <div class="save">あとで見たい人は
+    <svg viewBox="0 0 24 28"><path d="M3 2h18v24l-9-6-9 6z" fill="#22395c"/></svg><em>保存</em> してね</div>
+  <div class="footer"><div class="page"></div><div class="swipe">SWIPE<i>›</i><i>›</i><i>›</i></div></div>
+</section>
+
+<!-- 2枚目：導入 -->
+<section class="slide s2">
+  <div class="l1"><b>2022</b>年<b>11</b>月に発売した</div>
+  <div class="l2">LEXUS RX</div>
+  <div class="l3">を紹介します</div>
+  <div class="photo"><img src="../素材/580809100_18351150139207181_3947506167364353353_n.jpg" style="object-position:50% 78%"></div>
+  <div class="footer"></div>
+</section>
+
+<!-- 3枚目：概要 -->
+<section class="slide s3">
+  <div class="pill">LEXUS RX</div>
+  <div class="photo std"><img src="../素材/685809989_18377060374207181_2548851307763610718_n.jpg" style="object-position:50% 55%"></div>
+  <div class="info"><span class="tag">POINT</span>
+    <p class="lead">“高級SUV”というジャンルを生んだ元祖<small>初代は日本で「トヨタ ハリアー」として登場</small></p>
+  </div>
+  <div class="footer"></div>
+</section>
+
+<!-- 4枚目：サイズ -->
+<section class="slide s4">
+  <div class="pill">サイズ</div>
+  <div class="photo std"><img src="../素材/571435443_18349196743207181_6151188608503934334_n.jpg" style="object-position:50% 84%"></div>
+  <div class="info"><span class="tag">SIZE</span>
+    <div class="size-row">
+      <span class="k">全長</span><span></span><span class="k">全幅</span><span></span><span class="k">全高</span>
+      <span class="v">4,890</span><span class="x">×</span><span class="v">1,920</span><span class="x">×</span><span class="v">1,700<span class="unit">mm</span></span>
+    </div>
+    <p class="note">※RX350のみ全高1,705mm／全幅1.9m超えなので機械式駐車場は要確認</p>
+  </div>
+  <div class="footer"></div>
+</section>
+
+<!-- 5枚目：パワートレイン -->
+<section class="slide s5">
+  <div class="pill">パワートレイン</div>
+  <div class="photo std"><img src="../素材/671100589_18374540236207181_453194911422029633_n.jpg" style="object-position:50% 70%"></div>
+  <div class="info"><span class="tag">POWERTRAIN</span>
+    <p class="lead" style="font-size:40px;margin-bottom:14px">4種類から選べる</p>
+    <div class="grid4">
+      <div><b>RX350</b>2.4L ターボ</div>
+      <div><b>RX350h</b>ハイブリッド</div>
+      <div><b>RX450h+</b>プラグインHV</div>
+      <div><b>RX500h</b>ターボ＋HV</div>
+    </div>
+  </div>
+  <div class="footer"></div>
+</section>
+
+<!-- 6枚目：室内空間 -->
+<section class="slide s6">
+  <div class="pill">室内空間</div>
+  <div class="photo"><img src="../素材/interior_010.webp" style="object-position:50% 45%"></div>
+  <div class="footer"></div>
+</section>
+
+<!-- 7枚目：燃費 -->
+<section class="slide s7">
+  <div class="pill">燃費</div>
+  <div class="photo std"><img src="../素材/652765890_18369387340207181_8494528056992160805_n.jpg" style="object-position:50% 72%"></div>
+  <div class="info"><span class="tag">WLTC</span>
+    <p class="big">11.2〜20.3<small>km/L</small></p>
+    <p class="sub2">いちばん燃費が良いのは RX350h（2WD）</p>
+  </div>
+  <div class="footer"></div>
+</section>
+
+<!-- 8枚目：価格 -->
+<section class="slide s8">
+  <div class="pill">価格</div>
+  <div class="photo std"><img src="../素材/639563835_18366264367207181_1357462482059102030_n.jpg" style="object-position:50% 72%"></div>
+  <div class="info"><span class="tag">PRICE</span><span class="cap">2026年9月<br>一部改良モデル<br>（税込）</span>
+    <div class="price">
+      <span class="m">RX350</span><span class="p"><b>704</b>〜<b>751</b>万円</span>
+      <span class="m">RX350h</span><span class="p"><b>800</b>〜<b>851</b>万円</span>
+      <span class="m">RX450h+</span><span class="p"><b>913</b>万円</span>
+      <span class="m">RX500h</span><span class="p"><b>929</b>万円</span>
+    </div>
+  </div>
+  <div class="footer"></div>
+</section>
+
+<script>
+  // 共通フッター（ページ番号＋SWIPE）を差し込む
+  const slides = [...document.querySelectorAll('.slide')];
+  slides.forEach((s, i) => {
+    const f = s.querySelector('.footer');
+    if (f.children.length) return;
+    const last = i === slides.length - 1;
+    f.innerHTML = `<div class="page"><b>${String(i + 1).padStart(2, '0')}</b> / ${String(slides.length).padStart(2, '0')}</div>` +
+      (last ? `<div class="swipe">フォローして次回もチェック</div>`
+            : `<div class="swipe">SWIPE<i>›</i><i>›</i><i>›</i></div>`);
+  });
+  // ?s=番号 で表示するスライドを切り替え（指定なしは1枚目）
+  const n = +(new URLSearchParams(location.search).get('s') || 1);
+  slides[n - 1].classList.add('on');
+</script>
+</body>
+</html>
